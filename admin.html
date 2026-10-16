@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Seblak Juara UMKM</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-stone-100 text-stone-800 font-['Plus_Jakarta_Sans'] min-h-screen flex flex-col">
+
+    <!-- Navbar Admin -->
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-sm">
+                    <i class="fa-solid fa-fire-burner"></i>
+                </div>
+                <span class="font-extrabold text-stone-900 text-lg">
+                    Admin <span class="text-red-600">Seblak UMKM</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-stone-600 hover:text-red-600 border border-stone-200 hover:bg-stone-50 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-store"></i>
+                    <span>Lihat Toko</span>
+                </a>
+                <button onclick="adminLogout()" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 border border-red-200 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Keluar</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 1. LOGIN SECTION -->
+    <section id="loginSection" class="flex-1 flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl border border-stone-200 shadow-xl max-w-sm w-full text-center space-y-5">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-2xl shadow-inner">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-extrabold text-stone-900">Masuk Panel Admin</h1>
+                <p class="text-xs text-stone-500 mt-1">Masukkan kata sandi untuk mengelola menu dan pengaturan toko.</p>
+            </div>
+
+            <form onsubmit="checkAdminLogin(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">Kata Sandi Admin</label>
+                    <input type="password" id="adminPasswordInput" placeholder="Ketik kata sandi..." required 
+                           class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                    <span class="text-[11px] text-stone-400 mt-1 block">Default: <code class="bg-stone-100 px-1 py-0.5 rounded text-red-600 font-bold">makansantai</code></span>
+                </div>
+                <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-md transition-all">
+                    Masuk Sekarang
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- 2. ADMIN DASHBOARD PANEL -->
+    <main id="adminPanel" class="flex-1 max-w-6xl mx-auto w-full p-4 sm:p-6 space-y-6 hidden">
+        
+        <!-- Welcome Card -->
+        <div class="bg-gradient-to-r from-red-600 to-orange-600 rounded-2xl p-6 text-white shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h2 class="text-xl sm:text-2xl font-black">Kelola Menu & Penjualan Seblak</h2>
+                <p class="text-xs sm:text-sm text-red-100 mt-1">Perubahan yang Anda simpan di sini otomatis langsung muncul pada halaman utama website!</p>
+            </div>
+            <button onclick="openAddMenuModal()" class="px-4 py-2.5 rounded-xl bg-white text-red-600 font-extrabold text-xs sm:text-sm hover:bg-stone-100 shadow-md transition-all flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i>
+                <span>Tambah Menu Baru</span>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left: Table of Menu Items -->
+            <div class="lg:col-span-8 bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden flex flex-col">
+                <div class="p-4 sm:p-5 border-b border-stone-200 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-extrabold text-stone-900 text-base">Daftar Menu Aktif</h3>
+                        <p class="text-xs text-stone-500">Edit harga, foto, atau hapus menu.</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto flex-1">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-stone-50 border-b border-stone-200 text-[11px] font-bold text-stone-500 uppercase tracking-wider">
+                                <th class="py-3 px-4">No</th>
+                                <th class="py-3 px-4">Menu</th>
+                                <th class="py-3 px-4">Harga</th>
+                                <th class="py-3 px-4">Deskripsi</th>
+                                <th class="py-3 px-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminMenuTableBody">
+                            <!-- Populated by script.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right: Settings Form -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Shop Profile Setting -->
+                <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 space-y-4">
+                    <div class="flex items-center gap-2 border-b border-stone-100 pb-3">
+                        <i class="fa-solid fa-gear text-red-600"></i>
+                        <h3 class="font-bold text-stone-900 text-sm">Pengaturan Toko & WhatsApp</h3>
+                    </div>
+
+                    <form onsubmit="saveAdminSettings(event)" class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-stone-700 mb-1">Nama Usaha / Toko</label>
+                            <input type="text" id="setShopName" required class="w-full px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white">
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-stone-700 mb-1">Nomor WhatsApp Toko (Tujuan Pesanan)</label>
+                            <input type="text" id="setWhatsapp" placeholder="Contoh: 6281234567890" required class="w-full px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white">
+                            <span class="text-[10px] text-stone-400 mt-0.5 block">Awali dengan 62 tanpa spasi atau tanda plus</span>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-stone-700 mb-1">Alamat Warung / Lokasi</label>
+                            <textarea id="setAddress" rows="2" required class="w-full px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-stone-700 mb-1">Kata Sandi Admin Baru</label>
+                            <input type="password" id="setAdminPassword" required class="w-full px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white">
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs shadow-sm transition-all">
+                            Simpan Pengaturan
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Reset Database Card -->
+                <div class="bg-red-50 rounded-2xl border border-red-200 p-5 space-y-3 text-xs">
+                    <h4 class="font-bold text-red-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Reset Data Awal</span>
+                    </h4>
+                    <p class="text-stone-600 leading-relaxed text-[11px]">
+                        Kembalikan daftar menu dan pengaturan toko ke setelan bawaan awal jika terjadi kesalahan data.
+                    </p>
+                    <button onclick="resetDataToDefault()" class="w-full py-2 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 font-bold border border-red-300 transition-all">
+                        Reset ke Setelan Default
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- MODAL FORM TAMBAH / EDIT MENU -->
+    <div id="menuModal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div onclick="closeMenuModal()" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm transition-opacity"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full p-6">
+                <div class="flex justify-between items-center mb-4 border-b border-stone-100 pb-3">
+                    <h3 class="text-base font-extrabold text-stone-900" id="menuFormTitle">Tambah Menu Baru</h3>
+                    <button onclick="closeMenuModal()" class="text-stone-400 hover:text-stone-600">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <form onsubmit="saveMenuItem(event)" class="space-y-3 text-xs">
+                    <input type="hidden" id="menuFormId">
+
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">Nama Menu *</label>
+                        <input type="text" id="menuFormName" placeholder="Contoh: Seblak Tulang Mercon" required 
+                               class="w-full px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold text-stone-700 mb-1">Kategori *</label>
+                            <select id="menuFormCategory" class="w-full px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white">
+                                <option value="seblak">🍜 Paket Seblak</option>
+                                <option value="topping">🍢 Topping Prasmanan</option>
+                                <option value="minuman">🍹 Minuman Segar</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-stone-700 mb-1">Harga (Rp) *</label>
+                            <input type="number" id="menuFormPrice" placeholder="15000" required 
+                                   class="w-full px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold text-stone-700 mb-1">Badge / Label (Opsional)</label>
+                            <input type="text" id="menuFormBadge" placeholder="Contoh: Pedas Mantap 🔥" 
+                                   class="w-full px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-stone-700 mb-1">Pilihan Gambar</label>
+                            <select id="menuFormImage" class="w-full px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white">
+                                <option value="img/seblak-1.jpg">Seblak Komplit (seblak-1.jpg)</option>
+                                <option value="img/seblak-2.jpg">Seblak Ceker (seblak-2.jpg)</option>
+                                <option value="img/seblak-3.jpg">Seblak Seafood (seblak-3.jpg)</option>
+                                <option value="img/seblak-4.jpg">Seblak Prasmanan (seblak-4.jpg)</option>
+                                <option value="img/seblak-5.jpg">Seblak Mie Jebew (seblak-5.jpg)</option>
+                                <option value="img/seblak-6.jpg">Seblak Enoki (seblak-6.jpg)</option>
+                                <option value="img/foto-utama.jpg">Foto Utama (foto-utama.jpg)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">Deskripsi Menu</label>
+                        <textarea id="menuFormDesc" rows="3" placeholder="Jelaskan isian seblak dan cita rasanya..." 
+                                  class="w-full px-3 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-1 focus:ring-red-500 bg-white"></textarea>
+                    </div>
+
+                    <div class="pt-3 flex justify-end gap-2 border-t border-stone-100">
+                        <button type="button" onclick="closeMenuModal()" class="px-4 py-2 rounded-xl text-stone-600 hover:bg-stone-100 font-bold">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold shadow-md">
+                            Simpan Menu
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initAdminPage();
+        });
+    </script>
+</body>
+</html>
