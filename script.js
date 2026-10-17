@@ -5,7 +5,7 @@
 
 // Data Default Toko
 const DEFAULT_SETTINGS = {
-    shopName: "Seblak Juara UMKM",
+    shopName: "Seblak sultan",
     whatsappNumber: "6281234567890",
     address: "Jl. Kuliner Raya No. 45, Sentra Kuliner UMKM Nusantara",
     adminPassword: "makansantai"
